@@ -1,0 +1,21 @@
+import aiohttp
+import asyncio
+import json
+async def fetch_weather_data(api_key, city):
+    url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}"
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            if response.status == 200:
+                data = await response.json()
+                return data
+            else:
+                return None
+async def main():
+    api_key = "633a18c58e11619ecf57046cd346fc6a"
+    cities = ["Moscow","London","Rio"] 
+    for name in cities:
+            weather_data = await fetch_weather_data(api_key, name)
+            print(f"Данные о погоде в {name}:")
+            print(f"Общая погода - {weather_data['weather']}")
+            print(f"Информация о температуре - {weather_data['main']}")
+asyncio.run(main())

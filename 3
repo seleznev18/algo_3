@@ -1,0 +1,47 @@
+import asyncio
+import codecs
+async def count_letters_i(file_name):
+    count = 0
+    with codecs.open(file_name, 'r','utf-8') as file:
+        text=file.read()
+        for i in range(len(text)):
+            if text[i]=='и' and text[i-1]==' ' and text[i+1]==' ':
+                count+=1
+    return count
+
+async def count_letters_a(file_name):
+    count = 0
+    with codecs.open(file_name, 'r','utf-8') as file:
+        text = file.read()
+        count = text.count('А') + text.count('а')
+    return count
+
+async def count_dots(file_name):
+    count = 0
+    with codecs.open(file_name, 'r','utf-8') as file:
+        text = file.read()
+        count = text.count('.')
+    return count
+
+async def analyze_files(file1, file2, file3):
+    tasks = []
+    for func, file_name in [(count_letters_i, file1), (count_letters_a, file2), (count_dots, file3)]:
+        task = asyncio.create_task(func(file_name))
+        tasks.append(task)
+    results = await asyncio.gather(*tasks)
+    return results
+
+async def main():
+    file1 = 'Гоголь.Нос.txt'
+    file2 = 'Капитанская дочка.txt'
+    file3 = 'Евгений Онегин.txt'
+    results = await analyze_files(file1, file2, file3)
+    
+    print(f'Количество букв "И" в файле {file1}: {results[0]}')
+    print(f'Количество букв "А" в файле {file2}: {results[1]}')
+    print(f'Количество точек в файле {file3}: {results[2]}')
+
+asyncio.run(main())
+
+
+
